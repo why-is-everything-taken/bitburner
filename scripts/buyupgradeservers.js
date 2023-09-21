@@ -2,7 +2,6 @@
 export async function main(ns) {
   let maxServ = ns.getPurchasedServerLimit();
   let curServ = ns.getPurchasedServers().length;
-  let servers = [];
   let availableCash = ns.getServerMoneyAvailable('home');
   let pServs = new Set(['home']);
   pServs.forEach(a => ns.scan(a).forEach(b => b.match('pserv') && pServs.add(b).delete('home')));
