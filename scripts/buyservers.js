@@ -12,6 +12,7 @@ export async function main(ns) {
     for (let ps of pservs) {
       servers.push(ps);
     }
+    
     //if we have less than 25 owned servers, buy more
     if (servers.length < maxServers) {
       if (availableCash > ns.getPurchasedServerCost(16)) {
