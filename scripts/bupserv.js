@@ -6,9 +6,9 @@ export async function main(ns) {
   while (ns.getPurchasedServers().length < ns.getPurchasedServerLimit()) {
     if (ns.getPurchasedServerCost(16) <= ns.getServerMoneyAvailable('home')) {
       ns.purchaseServer('pserv-' + curServ, 16)
-      ns.toast('Buying pserv-' + curServ + ' with 16 GB of RAM', "info", 5000);
+      ns.toast('Buying pserv-' + curServ + ' with 16 GB of RAM', 'info', 5000);
       curServ++;
-      if (curServ == 25) {
+      if (curServ == 24) {
         curServ = 0;
       }
     }
