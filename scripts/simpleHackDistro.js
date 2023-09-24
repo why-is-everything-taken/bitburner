@@ -20,7 +20,6 @@ export async function main(ns) {
     for (let server of servers) {
       if (ns.fileExists("shared/wk.js") == false) {
         await ns.scp(["shared/wk.js", "shared/gr.js", "shared/hk.js"], server.id, "home");
-        //ns.tprint("$" + ns.getServerMaxMoney(server) + " " + server + " Has Root Access: " + ns.hasRootAccess(server) + " " + ns.getServerRequiredHackingLevel(server))
       }
     }
     for (let server of servers) {
