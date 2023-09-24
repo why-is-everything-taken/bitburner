@@ -1,6 +1,6 @@
 /** @param {NS} ns */
 
-import BaseServer from 'scripts/serverinfo.js';
+import BaseServer from 'libs/serverinfo.js';
 import dpList from 'scripts/serverList.js';
 
 export async function main(ns) {
