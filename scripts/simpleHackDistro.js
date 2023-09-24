@@ -1,7 +1,7 @@
 /** @param {NS} ns */
 
 import BaseServer from 'scripts/serverinfo.js';
-import dpList from 'scripts/wip/util.js';
+import dpList from 'scripts/serverList.js';
 
 export async function main(ns) {
   let target = new BaseServer(ns, ns.args[0]);
