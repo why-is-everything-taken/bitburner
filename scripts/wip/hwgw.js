@@ -1,24 +1,18 @@
 /** @param {NS} ns */
 
-import BaseServer from 'libs/serverinfo.js';
+import BaseServer from 'scripts/serverinfo.js';
 import dpList from 'scripts/wip/util.js';
-import BasePlayer from 'libs/playerinfo.js';
+import BasePlayer from 'scripts/playerinfo.js';
 
 export async function main(ns) {
 
   let player = new BasePlayer(ns, 'player');
   let target = new BaseServer(ns, ns.args[0]);
   ns.disableLog("ALL");
-  let mock = target;
-  mock.money.available = target.money.max * 0.9;
   let sList = dpList(ns);
-  let servers = [];
-  let hackThreads = Math.floor(ns.hackAnalyzeThreads(target.id, target.money.max * 0.1));
   let weakenThreads1 = Math.ceil((target.security.level - target.security.min) * 20);
   let growThreads = ns.formulas.hacking.growThreads(target.data, player.data, target.money.max, 1);
-  let hackTime = ns.getHackTime(target.id, player.data);
-  let weakenTime = hackTime * 4.0;
-  let home = new BaseServer(ns, 'home');
+  let servers = [];
   for (let s of sList) {
     let server = new BaseServer(ns, s);
     servers.push(server);
@@ -26,10 +20,10 @@ export async function main(ns) {
 
   while (growThreads > 0 || weakenThreads1 > 0) {
 
-    home = new BaseServer(ns, 'home');
+    let home = new BaseServer(ns, 'home');
     target = new BaseServer(ns, ns.args[0]);
     let currTime = performance.now()
-    weakenThreads1 = Math.ceil((target.security.level - target.security.min) * 20);
+
     let growThreads = ns.formulas.hacking.growThreads(target.data, player.data, target.money.max, 1);
     let weakenThreads2 = Math.ceil(growThreads / 12.5);
     let hackTime = ns.getHackTime(target.id, player.data);
@@ -46,7 +40,7 @@ export async function main(ns) {
         await ns.sleep(40);
       } else {
         if (weakenThreads1 > 0 && home.threadCount(1.8) > 0) {
-          ns.exec('shared/bwk.js', 'home', Math.min(growThreads, home.threadCount(1.8)), target.id)
+          ns.exec('shared/bwk.js', 'home', Math.min(weakenThreads1, home.threadCount(1.8)), target.id)
         } if (growThreads > 0 && home.threadCount(1.8) > 0) {
           ns.exec('shared/bgr.js', 'home', Math.min(growThreads, home.threadCount(1.8)), target.id)
         } if (weakenThreads2 > 0 && home.threadCount(1.8) > 0) {
@@ -60,19 +54,19 @@ export async function main(ns) {
   while (true) {
 
     player = new BasePlayer(ns, 'player');
-    home = new BaseServer(ns, 'home');
     target = new BaseServer(ns, ns.args[0]);
     let currTime = performance.now();
-    mock = target.data;
-    mock.moneyAvailable = target.money.max * 0.9;
-    hackThreads = Math.floor(ns.hackAnalyzeThreads(target.id, target.money.max * 0.1))
+    let mock = target;
+    mock.money.available = target.money.max * 0.8;
+    let hackThreads = Math.floor(ns.hackAnalyzeThreads(mock.id, target.money.max * 0.2))
     let weakenThreads1 = Math.ceil(hackThreads / 25);
-    let growThreads = Math.ceil(ns.formulas.hacking.growThreads(mock, player.data, target.money.max, 1));
+    let growThreads = Math.ceil(ns.formulas.hacking.growThreads(mock.data, player.data, target.money.max, 1));
     let weakenThreads2 = Math.ceil(growThreads / 12.5);
     let hackTime = ns.getHackTime(target.id, player.data);
     let weakenTime = hackTime * 4.0;
     let nextLanding = weakenTime + 3000 + currTime;
     sList = dpList(ns);
+    ns.tprint(mock)
 
     for (let server of servers) {
       if (ns.fileExists('shared/bwk.js') == false) {
@@ -95,9 +89,10 @@ export async function main(ns) {
       //ns.tprint()
       if (server.threadCount(1.8) >= (growThreads + weakenThreads1 + weakenThreads2 + hackThreads)) {
         ns.exec('shared/bhk.js', server.id, batch.hk, target.id, false, nextLanding);
-        ns.exec('shared/bwk.js', server.id, batch.wk1, target.id, false, nextLanding + 40);
-        ns.exec('shared/bgr.js', server.id, batch.gr, target.id, false, nextLanding + 80);
-        ns.exec('shared/bwk.js', server.id, batch.wk2, target.id, false, nextLanding + 120);
+        ns.exec('shared/bwk.js', server.id, batch.wk1 + 1, target.id, false, nextLanding + 40);
+        ns.exec('shared/bgr.js', server.id, batch.gr + 1, target.id, false, nextLanding + 80);
+        ns.exec('shared/bwk.js', server.id, batch.wk2 + 1, target.id, false, nextLanding + 120);
+        await ns.sleep(40);
       }
     }
     await ns.sleep(200);
